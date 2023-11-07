@@ -1,0 +1,22 @@
+//@version=4
+// https://www.youtube.com/watch?v=RFrVz_QYLds
+
+study(title="MA-EMA-RSI Alert", shorttitle="MA-EMA-RSI Alert")
+src = input(close, title="Source")
+len = input(9, minval=1, title="Length")
+len2 = input(40, minval=10, title="EMA Length")
+len3 = input(14, minval=5, title="RSI Length")
+rsiover = input(70, minval=51, title="RSI Overbought")
+rsiunder = input(30, minval=1, title="RSI Oversold")
+maspread = input(0.03, minval=0.001, title="MA Spread Percent as Decimal")
+
+tpc = close * maspread
+out = sma(src, len)
+out2 = ema(src, len2)
+rsiout = rsi(src, len3)
+
+tooHigh = (out - out2) > tpc and rsiout > rsiover
+
+tooLow = (out2 - out) > tpc and rsiout < rsiunder
+tooLowAlert = tooLow ? 1 : 0
+plot(tooLowAlert)

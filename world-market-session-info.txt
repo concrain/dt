@@ -1,0 +1,29 @@
+//@version = 4
+study( title = "Session Info" , overlay = true)
+
+// 1. Define strategy settings
+
+nySession   = input(title="New York session", type=input.session, defval="1300-2100")
+showNy      = input(title="Display New York session?", type=input.bool, defval=true)
+lonSession  = input(title="London session", type=input.session, defval="0800-1600")
+showLon     = input(title="Display London session?", type=input.bool, defval=true)
+tokSession  = input(title="Tokyo session", type=input.session, defval="2300-0700")
+showTok     = input(title="Display Tokyo session?", type=input.bool, defval=true)
+
+// 2. Calculate strategy values
+
+// Constants for colours
+nyColour  =  #186595
+lonColour = #B30000
+tokColour = #757100
+
+InSession(sess) => na(time(timeframe.period, sess)) == false
+
+// 3. Plots
+
+bgcolor(color=InSession(nySession)[1] and showNy ? nyColour : na,
+     title="New York", transp=85)
+bgcolor(color=InSession(lonSession)[1] and showLon ? lonColour : na,
+     title="London", transp=85)
+bgcolor(color=InSession(tokSession)[1] and showTok ? tokColour : na,
+     title="Tokyo", transp=85)

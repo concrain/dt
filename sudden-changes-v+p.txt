@@ -1,0 +1,37 @@
+//@version=4
+// This script identifies sudden changes in both volume and price. 
+
+// You can set the sensitivities for both volume change and price change with respect to the moving averages.
+
+// There are four inputs in this script: the first two parameters indicate the length for moving averages of volume and price 
+// and the last two parameters indicate how much the volume change (e.g. 2 times) or the price change (e.g. 0.01; that is 1 percent of close price) should be.
+
+study(title="V+P Action Alert", overlay = false)
+src = close
+src1 = close[1]
+
+// smooth the volume change
+nv = change(src) > 0 ? volume : change(src) < 0 ? -volume : 0*volume
+EMovingAvgVolume = ema(volume,input(10))
+pv = nv / EMovingAvgVolume
+
+// smooth the price change.
+price_abs1 = change(src1) > 0 ?  change(src1) : change(src1) < 0 ? -change(src1) : 0*change(src1)
+EMovingAvgPriceChange = ema(price_abs1,input(10))
+nprice = price_abs1 / EMovingAvgPriceChange
+
+//define how aggressive you like it to be : volume multiplier and price change multiplier
+volume_multiplier = input(2)
+price_multiplier = input(1)
+
+bull = (pv > volume_multiplier) and (nprice > price_multiplier)
+bullAlert = bull ? 1 : 0
+//plot(bullAlert)
+
+bear = (pv < -1*volume_multiplier) and (nprice <= -1*price_multiplier)
+bearAlert = bear ? -1 : 0
+//plot(bearAlert)
+
+// show both
+results = (pv > volume_multiplier or pv < -1*volume_multiplier) and (nprice > price_multiplier  or nprice <= -1*price_multiplier )
+plotshape(results, style=shape.xcross)a

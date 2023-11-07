@@ -1,0 +1,21 @@
+//@version=4
+study(title="MACD SIGNAL DIFF")
+
+// Getting inputs
+src = input(title="Source", type=input.source, defval=close)
+
+fast_length = input(title="Fast Length", type=input.integer, defval=12)
+slow_length = input(title="Slow Length", type=input.integer, defval=26)
+signal_length = input(title="Signal Smoothing", type=input.integer, minval = 1, maxval = 50, defval = 9)
+//sma_source = input(title="Simple MA(Oscillator)", type=input.bool, defval=false)
+//sma_signal = input(title="Simple MA(Signal Line)", type=input.bool, defval=false)
+
+// Calculating
+fast_ma = ema(src, fast_length)
+slow_ma = ema(src, slow_length)
+macd = fast_ma - slow_ma
+signal = ema(macd, signal_length)
+
+strongUp = ((macd - (macd * 0.5)) > signal)
+strongUpAlert = strongUp ? 1 : 0
+plot(strongUpAlert)s
